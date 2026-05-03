@@ -71,6 +71,8 @@ export const ToolRunErrorDialogEvent = 'ToolRunEventDialogEvent'
 export const ToolRequiredByModelDialogEvent = 'ToolRequiredByModelDialogEvent'
 export const ToolLoopDialogEvent = 'ToolLoopDialogEvent'
 
+export const SessionUnLoadedEvent = 'SessionUnLoadedEvent'
+
 export const LogErrorEvent = 'LogErrorEvent'
 export const LogWarningEvent = 'LogWarningEvent'
 

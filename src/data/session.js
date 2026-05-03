@@ -22,15 +22,22 @@ export default class Session {
 	dialogCurrentTargetAgent = null
 
 	// cli env vars
-	// contexte vars
+	// context vars
 	vars = null
 
 	// root dialog context (dialog tree)
 	rootDialogContext = null
 
-	// agents config ? (prompt, instruct, ...)
+	// documents
+	documents = null
 
-	// dialog context root (session dialog context)
+	// time
+	time = {
+		up: 0,
+		start: 0
+	}
+
+	// agents config ? (prompt, instruct, ...)
 
 	constructor(id, ctx) {
 		this.id = id
@@ -61,7 +68,7 @@ export default class Session {
 	}
 
 	static async load(ctx, id) {
-		const p = sessionPath(ctx)
+		const p = sessionPath(ctx, id)
 		if (!existsSync(p))
 			throw new Error('session not found: ' + id)
 
@@ -76,48 +83,15 @@ export default class Session {
 			// new if missing
 			return await Session.#buildNewSession(ctx, id)
 		}
+
 		// deserialize
 		const st = JSON.parse(readFileSync(f).toString())
 		const s = new Session(id, ctx)
 		s.cloneFrom(st)
+		s.id = id	// data model migration
 		s.commandHistory = Session.loadCommandHistory(ctx)
+
 		return s
-	}
-
-	async loadAgents(outputContext) {
-		const lst = [...this.ctx.agents.list]
-		const agentsIds = [...this.agents]
-		this.ctx.cli.restoreDialogCurrentTargetAgent
-			= this.dialogCurrentTargetAgent
-
-		for (var i = 0; i < lst.length; i++) {
-			const agent = lst[i]
-			agent.index = i
-
-			if (agentsIds.includes(agent.id)) {
-
-				await this.ctx.components.agents.loadAgent(
-					new AIAgent(
-						this.ctx,
-						agent),
-					outputContext
-				)
-			}
-		}
-		if (!agentsIds.includes(this.ctx.cli.dialogCurrentTargetAgent)) {
-			if (agentsIds.length > 0)
-				this.ctx.cli.restoreDialogCurrentTargetAgent
-					= this.ctx.cli.dialogCurrentTargetAgent
-					= agentsIds[0]
-		}
-	}
-
-	async unloadAgents() {
-		const agentsIds = [...this.session.agents]
-		const e = this.ctx.components.event
-		for (var i = 0; i < agentsIds.length; i++) {
-			e.emit(RunCommandEvent, 'agent rm ' + agentsIds[i])
-		}
 	}
 
 	cloneFrom(s) {
@@ -126,6 +100,7 @@ export default class Session {
 		this.commandHistory = s.commandHistory
 		this.agents = s.agents
 		this.dialogCurrentTargetAgent = s.dialogCurrentTargetAgent
+		this.documents = s.documents
 	}
 
 	static async new(ctx, id) {
@@ -158,10 +133,9 @@ export default class Session {
 		delete this.commandHistory
 		delete this.ctx
 		delete this.rootDialogContext
+		delete this.vars
 
 		const f = sessionDataFile(ctx, this.id)
-
-		delete this.vars
 
 		writeFileSync(f, toJson(this))
 
@@ -171,6 +145,46 @@ export default class Session {
 		this.vars = vars
 		// note: session history is regularly auto-saved
 	}
+
+	// ----- agents -----
+
+	async loadAgents(outputContext) {
+		const lst = [...this.ctx.agents.list]
+		const agentsIds = [...this.agents]
+		this.ctx.cli.restoreDialogCurrentTargetAgent
+			= this.dialogCurrentTargetAgent
+
+		for (var i = 0; i < lst.length; i++) {
+			const agent = lst[i]
+			agent.index = i
+
+			if (agentsIds.includes(agent.id)) {
+
+				await this.ctx.components.agents.loadAgent(
+					new AIAgent(
+						this.ctx,
+						agent),
+					outputContext
+				)
+			}
+		}
+		if (!agentsIds.includes(this.ctx.cli.dialogCurrentTargetAgent)) {
+			if (agentsIds.length > 0)
+				this.ctx.cli.restoreDialogCurrentTargetAgent
+					= this.ctx.cli.dialogCurrentTargetAgent
+					= agentsIds[0]
+		}
+	}
+
+	async unloadAgents() {
+		const agentsIds = [...this.agents]
+		const e = this.ctx.components.event
+		for (var i = 0; i < agentsIds.length; i++) {
+			e.emit(RunCommandEvent, 'agent rm ' + agentsIds[i])
+		}
+	}
+
+	// ----- command history -----
 
 	async updateCommandHistory(cmd) {
 		this.commandHistory.push(cmd)
