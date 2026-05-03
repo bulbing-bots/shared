@@ -19,6 +19,9 @@ export default class Session {
 	// loaded plugins / agents
 	// loaded agents ids
 	agents = null
+	// unloaded agents (previously loaded) on session switch
+	unloadedAgents = null
+	// last current dialog target
 	dialogCurrentTargetAgent = null
 
 	// cli env vars
@@ -101,6 +104,7 @@ export default class Session {
 		this.agents = s.agents
 		this.dialogCurrentTargetAgent = s.dialogCurrentTargetAgent
 		this.documents = s.documents
+		this.unloadedAgents = s.unloadedAgents
 	}
 
 	static async new(ctx, id) {
@@ -150,7 +154,12 @@ export default class Session {
 
 	async loadAgents(outputContext) {
 		const lst = [...this.ctx.agents.list]
-		const agentsIds = [...this.agents]
+		var agentsIds = [...this.agents]
+		const unloadedAgentsIds = !this.unloadedAgents ? []
+			: [... this.unloadedAgents]
+		agentsIds = [...agentsIds, ...unloadedAgentsIds]
+		agentsIds = [...new Set(agentsIds)]
+
 		this.ctx.cli.restoreDialogCurrentTargetAgent
 			= this.dialogCurrentTargetAgent
 
@@ -174,10 +183,12 @@ export default class Session {
 					= this.ctx.cli.dialogCurrentTargetAgent
 					= agentsIds[0]
 		}
+		this.unloadedAgents = []
 	}
 
 	async unloadAgents() {
 		const agentsIds = [...this.agents]
+		this.unloadedAgents = [... this.agents]
 		const e = this.ctx.components.event
 		for (var i = 0; i < agentsIds.length; i++) {
 			e.emit(RunCommandEvent, 'agent rm ' + agentsIds[i])
