@@ -205,7 +205,7 @@ export const removeServer = (ctx, server) => {
 			)
 		return srv.share
 	}
-	return 0
+	return null
 }
 
 export const isServerRunnning = (ctx, server) => {
