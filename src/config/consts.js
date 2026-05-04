@@ -36,9 +36,9 @@ export const Mouse_Action_Release = 'release'
 
 // reserved variables ids
 
-export const EnvVar_LastCommandResult = '='
-export const EnvVar_LastError = '#'
-export const EnvVar_LastCommand = '!'
+export const VarCli_LastCommandResult = '='
+export const VarCli_LastError = '#'
+export const VarCli_LastCommand = '!'
 
 // ids
 

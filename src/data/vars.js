@@ -1,3 +1,9 @@
+import Var from "./var"
+
+export const VAR_SCOPE_CLI = 'VAR_SCOPE_CLI'
+export const VAR_SCOPE_ENV = 'VAR_SCOPE_ENV'
+export const VAR_SCOPE_USER = 'VAR_SCOPE_USER'
+
 export default class Vars {
 
 	mem = {}
@@ -10,7 +16,7 @@ export default class Vars {
 	init() {
 		if (this.ctx.env) {
 			for (const [key, value] of Object.entries(this.ctx.env)) {
-				this.set(key, value)
+				this.set(key, value, VAR_SCOPE_ENV)
 			}
 		}
 	}
@@ -19,8 +25,8 @@ export default class Vars {
 
 	}
 
-	set(key, value) {
-		this.mem[key] = value
+	set(key, value, scope = VAR_SCOPE_USER) {
+		this.mem[key] = new Var(key, value, scope)
 		return this
 	}
 
@@ -34,7 +40,7 @@ export default class Vars {
 	}
 
 	list() {
-		return this.mem
+		return { ...this.mem }
 	}
 
 	replaceVars(text) {
@@ -46,20 +52,29 @@ export default class Vars {
 	replaceCliEnvVars(text) {
 		return this.replaceVarsWithTpl(
 			text,
-			k => '${' + k + '}'
+			VAR_SCOPE_ENV
 		)
 	}
 
 	replaceContextVars(text) {
 		return this.replaceVarsWithTpl(
 			text,
-			k => '{{' + k + '}}'
+			VAR_SCOPE_USER
 		)
 	}
 
-	replaceVarsWithTpl(text, keyFunc) {
-		for (const [key, value] of Object.entries(this.mem)) {
-			const pattern = keyFunc(key)
+	replaceVarsWithTpl(text, scope) {
+		var tpl = null
+
+		if (scope == VAR_SCOPE_CLI || scope == VAR_SCOPE_ENV)
+			tpl = k => '${' + k + '}'
+		if (scope == VAR_SCOPE_USER) tpl = k => '{{' + k + '}}'
+		if (!tpl) throw new Error('scope unknown: ' + scope)
+
+		for (const [key, v] of Object.entries(this.mem)) {
+			if (v.scope != scope) continue
+			const value = v.value
+			const pattern = tpl(key)
 			text = text.replaceAll(pattern, value)
 		}
 		return text
