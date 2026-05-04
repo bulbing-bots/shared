@@ -4,9 +4,9 @@ import { join } from 'path';
 import { appendFile, writeFile } from "fs/promises";
 import DialogContext from "./dialog-context";
 import { RunCommandEvent } from "./events";
-import AIAgent from "../../../cli/src/components/ai/ai-agent";
 import { DialogContext_Root } from "../config/consts";
 import Vars from "./vars";
+import AIAgent from "./ai/ai-agent";
 
 export default class Session {
 
