@@ -1,4 +1,3 @@
-import Dialoger from "../../../cli/src/components/dialog/dialoger"
 import OutputContext from "./output-context"
 import PartialContentAccumulatorSplitter from "../utils/text/partial-content-accumulator-splitter"
 import Logger from "../components/sys/logger"
@@ -113,7 +112,7 @@ export default class DialogContext {
 	 * build a new DialogContext necessary to initiale a dialog
 	 * @param {Object} ctx app context
 	 * @param {OutputContext} outputContext current output context
-	 * @param {Dialoger} dialoger dialoger to be used
+	 * @param {Object} dialoger dialoger to be used
 	 * @param {Object} agent loaded agent specification (ctx.components.agents.agents)
 	 * @param {Object} fromAgent dialog initiator if is afent or null if from user, loaded agent specification (ctx.components.agents.agents)
 	 * @param {Object} task running task if any
