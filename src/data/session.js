@@ -26,6 +26,7 @@ export default class Session {
 
 	// cli env vars
 	// context vars
+	// user vars
 	vars = null
 
 	// root dialog context (dialog tree)

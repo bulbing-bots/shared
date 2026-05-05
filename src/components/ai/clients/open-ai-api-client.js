@@ -3,6 +3,7 @@ import { OpenAI as OpenAiApi } from 'openai'
 import AIApiClient from './ai-api-client.js'
 import chalk from 'chalk'
 import { AgentPartialReasoningResponseEvent, agentPartialResponseEvent, AgentPartialResponseEvent } from '../../../data/events.js'
+import { getSession } from '../../../utils/utils.js'
 
 /**
  * OPEN AI standard api client
@@ -21,8 +22,12 @@ export default class OpenAIApiClient extends AIApiClient {
 
 		// init client
 		const c = this.config
+		const apiKey = getSession(this.ctx)
+			.vars
+			.replaceVars(c.apiKey)
+
 		this.client = new OpenAiApi({
-			apiKey: c.apiKey,
+			apiKey: apiKey,
 			maxRetries: c.maxRetries,
 			baseURL: c.baseURL.replace('{port}', c.port),
 			timeout: c.timeout
