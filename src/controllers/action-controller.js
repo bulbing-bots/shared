@@ -24,8 +24,8 @@ export default class ActionController {
 			if (this.onEnded) await this.onEnded(this.output)
 			if (this.next) await this.next.run(this.output)
 		} catch (err) {
-			console.error(err)
-			Logger.logError(err)
+			console.error(err.stack)
+			Logger.logError(err.stack)
 		}
 		if (this.autoStopUI) this.uiFunc.stop()
 	}

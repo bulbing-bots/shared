@@ -4,7 +4,7 @@ import { join } from 'path';
 import { appendFile, writeFile } from "fs/promises";
 import DialogContext from "./dialog-context";
 import { RunCommandEvent } from "./events";
-import { DialogContext_Root } from "../config/consts";
+import { DialogContext_Root, TUIAgentId } from "../config/consts";
 import Vars from "./vars";
 import AIAgent from "./ai/ai-agent";
 
@@ -155,6 +155,8 @@ export default class Session {
 
 	async loadAgents(outputContext) {
 		const lst = [...this.ctx.agents.list]
+		// restore a TUI agent if no one
+		if (!this.agents) this.agents = [TUIAgentId]
 		var agentsIds = [...this.agents]
 		const unloadedAgentsIds = !this.unloadedAgents ? []
 			: [... this.unloadedAgents]
