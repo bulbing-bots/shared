@@ -132,7 +132,7 @@ export default class Session {
 	}
 
 	async save(saveAll = false, forceWait = false) {
-		Logger.log('saving session: ' + this.id)
+		//Logger.log('saving session: ' + this.id)
 
 		// serialize session data
 		const h = this.commandHistory
@@ -154,7 +154,7 @@ export default class Session {
 		this.rootDialogContext = rdc
 		this.vars = vars
 		// note: session history is regularly auto-saved
-		Logger.log('session saved')
+		//Logger.log('session saved')
 	}
 
 	// ----- agents -----
