@@ -39,7 +39,9 @@ export default class Session {
 	// time
 	time = {
 		up: 0,
-		start: 0
+		totalUp: 0,
+		start: 0,
+		end: 0
 	}
 
 	// agents config ? (prompt, instruct, ...)
