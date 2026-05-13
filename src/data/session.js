@@ -7,6 +7,7 @@ import { RunCommandEvent } from "./events";
 import { DialogContext_Root, TUIAgentId } from "../config/consts";
 import Vars from "./vars";
 import AIAgent from "./ai/ai-agent";
+import Logger from './../components/sys/logger';
 
 export default class Session {
 
@@ -129,6 +130,8 @@ export default class Session {
 	}
 
 	async save(saveAll = false, forceWait = false) {
+		Logger.log('saving session: ' + this.id)
+
 		// serialize session data
 		const h = this.commandHistory
 		const ctx = this.ctx
@@ -149,6 +152,7 @@ export default class Session {
 		this.rootDialogContext = rdc
 		this.vars = vars
 		// note: session history is regularly auto-saved
+		Logger.log('session saved')
 	}
 
 	// ----- agents -----
