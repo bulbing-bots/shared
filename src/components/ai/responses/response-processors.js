@@ -15,7 +15,7 @@ export default class ResponseProcessors {
 		this.status = new Status(ctx)
 		this.outputContext = outputContext
 		this.pluginsPath = join(process.cwd(),
-			this.ctx.paths.shared,
+			this.ctx.paths.core,
 			this.ctx.paths.src,
 			this.ctx.paths.components,
 			this.ctx.paths.aiComponents,

@@ -1,4 +1,4 @@
-import { Role_Assistant, Role_System } from '../../../../shared/src/data/ai/roles.js'
+import { Role_Assistant, Role_System } from '../../../../core/src/data/ai/roles.js'
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { sessionPath, toJson } from '../../utils/utils.js'

@@ -1,4 +1,4 @@
-import { getSession, sessionDataFile, sessionPath, toJson } from "../../../shared/src/utils/utils"
+import { getSession, sessionDataFile, sessionPath, toJson } from "../../../core/src/utils/utils"
 import { existsSync, mkdir, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { appendFile, writeFile } from "fs/promises";
